@@ -197,14 +197,30 @@ void concat(struct node *ptr, struct node *ptr1){
 struct node *intersection(struct node *ptr, struct node *ptr1) {
     struct node *result = NULL; 
     struct node *p = ptr; 
+
+    //if either of the set is empty
+    if(ptr==NULL || ptr1==NULL){
+        return result;
+    }
+
+    //code for non empty sets
     while (p != NULL) {
         struct node *q = ptr1;
         while (q != NULL) {
             if (p->data == q->data) {
                 struct node *newNode = (struct node *)malloc(sizeof(struct node));
                 newNode->data = p->data;
-                newNode->next = result;
-                result = newNode;
+                if(result==NULL){
+                    result=newNode;
+                    result->prev = NULL;
+                    result->next = NULL;
+                }
+                else{
+                    result->prev=newNode;
+                    newNode->next = result;
+                    newNode->prev=NULL;
+                    result = newNode;
+                }
                 break; 
             }
             q = q->next;
@@ -213,6 +229,57 @@ struct node *intersection(struct node *ptr, struct node *ptr1) {
     }
     return result; 
 }
+
+//union
+struct node *Union(struct node *ptr1, struct node *ptr2){
+    struct node *result=NULL,*p=ptr1;
+    //if either of the set is empty
+    if(ptr1==NULL){
+        result=ptr2;
+        return result;
+    }
+    if(ptr2==NULL){
+        result=ptr1;
+        return result;
+    }
+
+    //code for non empty sets
+    while(p!=NULL){
+        struct node *q=ptr2;
+        while(q!=NULL){
+            if(p->data==q->data){
+                break;
+            }
+            q=q->next;
+        }
+        if(q==NULL){
+            struct node *newNode = (struct node *)malloc(sizeof(struct node));
+            newNode->data = p->data;
+            if(result==NULL){
+                result=newNode;
+                result->prev = NULL;
+                result->next = NULL;
+            }
+            else{
+            result->prev=newNode;
+            newNode->next = result;
+            newNode->prev=NULL;
+            result = newNode;
+            }
+            
+        }
+        p=p->next;
+        
+    }
+    struct node *temp=result;
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    temp->next=ptr2;
+    ptr2->prev=temp;
+    return result;  
+}
+
 
 void display(){
     struct node * temp = head;
